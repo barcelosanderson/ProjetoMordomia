@@ -12,7 +12,7 @@
         @csrf
         <div class="mb-3">
             <label class="label-dark">Nome da tarefa</label>
-            <input type="text" name="nome" placeholder="Ex: Limpar a cozinha..."
+            <input type="text" name="nome" placeholder="Ex: Lavar a louça, Fazer compras..."
                    class="input-dark" required autofocus>
         </div>
         <div class="d-flex gap-2 mt-3">

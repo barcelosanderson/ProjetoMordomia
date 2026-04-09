@@ -12,7 +12,7 @@
         @csrf
         <div class="mb-3">
             <label class="label-dark">Descrição</label>
-            <input type="text" name="nome" placeholder="Ex: Salário, Mercado..."
+            <input type="text" name="nome" placeholder="Ex: Salário, Aluguel, Supermercado..."
                    class="input-dark" required autofocus>
         </div>
         <div class="mb-3">

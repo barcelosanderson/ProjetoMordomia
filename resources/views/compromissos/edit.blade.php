@@ -14,6 +14,7 @@
         <div class="mb-3">
             <label class="label-dark">Título</label>
             <input type="text" name="titulo" value="{{ $compromisso->titulo }}"
+                   placeholder="Ex: Reunião, Consulta médica..."
                    class="input-dark" required autofocus>
         </div>
         <div class="row g-3 mb-3">

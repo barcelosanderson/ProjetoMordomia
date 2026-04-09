@@ -14,6 +14,7 @@
         <div class="mb-3">
             <label class="label-dark">Nome do item</label>
             <input type="text" name="nome" value="{{ $compra->nome }}"
+                   placeholder="Ex: Arroz, Feijão, Leite..."
                    class="input-dark" required autofocus>
         </div>
         <div class="d-flex gap-2 mt-3">

@@ -14,15 +14,24 @@
             <label class="label-dark">Título</label>
             <input type="text" name="titulo" placeholder="Ex: Reunião, Consulta médica..."
                    class="input-dark" required autofocus>
+            @error('titulo')
+                <small style="color:#ff6b6b;">{{ $message }}</small>
+            @enderror
         </div>
         <div class="row g-3 mb-3">
             <div class="col">
                 <label class="label-dark">Data</label>
                 <input type="date" name="data" class="input-dark" required>
+                @error('data')
+                    <small style="color:#ff6b6b;">{{ $message }}</small>
+                @enderror
             </div>
             <div class="col-auto" style="width:140px;">
                 <label class="label-dark">Hora</label>
                 <input type="time" name="hora" class="input-dark" required>
+                @error('hora')
+                    <small style="color:#ff6b6b;">{{ $message }}</small>
+                @enderror
             </div>
         </div>
         <div class="d-flex gap-2 mt-3">

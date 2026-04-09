@@ -14,11 +14,17 @@
             <label class="label-dark">Descrição</label>
             <input type="text" name="nome" placeholder="Ex: Salário, Aluguel, Supermercado..."
                    class="input-dark" required autofocus>
+            @error('nome')
+                <small style="color:#ff6b6b;">{{ $message }}</small>
+            @enderror
         </div>
         <div class="mb-3">
             <label class="label-dark">Valor (R$)</label>
             <input type="number" name="valor" step="0.01" min="0" placeholder="0,00"
                    class="input-dark" required>
+            @error('valor')
+                <small style="color:#ff6b6b;">{{ $message }}</small>
+            @enderror
         </div>
         <div class="mb-3">
             <label class="label-dark">Tipo</label>

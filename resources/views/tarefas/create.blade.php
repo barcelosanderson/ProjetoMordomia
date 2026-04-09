@@ -14,6 +14,9 @@
             <label class="label-dark">Nome da tarefa</label>
             <input type="text" name="nome" placeholder="Ex: Lavar a louça, Fazer compras..."
                    class="input-dark" required autofocus>
+            @error('nome')
+                <small style="color:#ff6b6b;">{{ $message }}</small>
+            @enderror
         </div>
         <div class="d-flex gap-2 mt-3">
             <button type="submit" class="btn-primary-dark">Adicionar</button>

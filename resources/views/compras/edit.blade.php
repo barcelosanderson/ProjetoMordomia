@@ -16,6 +16,9 @@
             <input type="text" name="nome" value="{{ $compra->nome }}"
                    placeholder="Ex: Arroz, Feijão, Leite..."
                    class="input-dark" required autofocus>
+            @error('nome')
+                <small style="color:#ff6b6b;">{{ $message }}</small>
+            @enderror
         </div>
         <div class="d-flex gap-2 mt-3">
             <button type="submit" class="btn-primary-dark">Salvar</button>

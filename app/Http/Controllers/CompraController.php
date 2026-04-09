@@ -33,6 +33,10 @@ class CompraController extends Controller
     {
         $request->validate([
             'nome' => 'required|min:3|max:100',
+        ], [
+            'nome.required' => 'O nome do item é obrigatório.',
+            'nome.min'      => 'O nome do item deve ter pelo menos 3 caracteres.',
+            'nome.max'      => 'O nome do item não pode ultrapassar 100 caracteres.',
         ]);
 
         try {
@@ -59,6 +63,10 @@ class CompraController extends Controller
     {
         $request->validate([
             'nome' => 'required|min:3|max:100',
+        ], [
+            'nome.required' => 'O nome do item é obrigatório.',
+            'nome.min'      => 'O nome do item deve ter pelo menos 3 caracteres.',
+            'nome.max'      => 'O nome do item não pode ultrapassar 100 caracteres.',
         ]);
 
         try {

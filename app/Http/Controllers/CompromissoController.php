@@ -35,6 +35,13 @@ class CompromissoController extends Controller
             'titulo' => 'required|min:3|max:100',
             'data'   => 'required|date',
             'hora'   => 'required',
+        ], [
+            'titulo.required' => 'O título do compromisso é obrigatório.',
+            'titulo.min'      => 'O título deve ter pelo menos 3 caracteres.',
+            'titulo.max'      => 'O título não pode ultrapassar 100 caracteres.',
+            'data.required'   => 'A data do compromisso é obrigatória.',
+            'data.date'       => 'A data informada não é válida.',
+            'hora.required'   => 'A hora do compromisso é obrigatória.',
         ]);
 
         try {
@@ -63,6 +70,13 @@ class CompromissoController extends Controller
             'titulo' => 'required|min:3|max:100',
             'data'   => 'required|date',
             'hora'   => 'required',
+        ], [
+            'titulo.required' => 'O título do compromisso é obrigatório.',
+            'titulo.min'      => 'O título deve ter pelo menos 3 caracteres.',
+            'titulo.max'      => 'O título não pode ultrapassar 100 caracteres.',
+            'data.required'   => 'A data do compromisso é obrigatória.',
+            'data.date'       => 'A data informada não é válida.',
+            'hora.required'   => 'A hora do compromisso é obrigatória.',
         ]);
 
         try {

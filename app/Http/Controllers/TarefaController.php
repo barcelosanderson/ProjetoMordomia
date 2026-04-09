@@ -33,6 +33,10 @@ class TarefaController extends Controller
     {
         $request->validate([
             'nome' => 'required|min:3|max:100',
+        ], [
+            'nome.required' => 'O nome da tarefa é obrigatório.',
+            'nome.min'      => 'O nome da tarefa deve ter pelo menos 3 caracteres.',
+            'nome.max'      => 'O nome da tarefa não pode ultrapassar 100 caracteres.',
         ]);
 
         try {
@@ -59,6 +63,10 @@ class TarefaController extends Controller
     {
         $request->validate([
             'nome' => 'required|min:3|max:100',
+        ], [
+            'nome.required' => 'O nome da tarefa é obrigatório.',
+            'nome.min'      => 'O nome da tarefa deve ter pelo menos 3 caracteres.',
+            'nome.max'      => 'O nome da tarefa não pode ultrapassar 100 caracteres.',
         ]);
 
         try {

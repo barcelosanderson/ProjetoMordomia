@@ -38,6 +38,15 @@ class TransacaoController extends Controller
             'nome'  => 'required|min:3|max:100',
             'valor' => 'required|numeric|min:0.01',
             'tipo'  => 'required|in:receita,despesa',
+        ], [
+            'nome.required'  => 'A descrição da transação é obrigatória.',
+            'nome.min'       => 'A descrição deve ter pelo menos 3 caracteres.',
+            'nome.max'       => 'A descrição não pode ultrapassar 100 caracteres.',
+            'valor.required' => 'O valor da transação é obrigatório.',
+            'valor.numeric'  => 'O valor informado não é válido.',
+            'valor.min'      => 'O valor deve ser maior que zero.',
+            'tipo.required'  => 'Selecione o tipo da transação.',
+            'tipo.in'        => 'O tipo selecionado não é válido.',
         ]);
 
         try {

@@ -31,6 +31,10 @@ class CompraController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'nome' => 'required|min:3|max:100',
+        ]);
+
         try {
             Compra::create($request->all());
         } catch (Exception $e) {
@@ -53,6 +57,10 @@ class CompraController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'nome' => 'required|min:3|max:100',
+        ]);
+
         try {
             $compra = Compra::findOrFail($id);
             $compra->update($request->all());

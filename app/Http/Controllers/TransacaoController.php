@@ -34,6 +34,12 @@ class TransacaoController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'nome'  => 'required|min:3|max:100',
+            'valor' => 'required|numeric|min:0.01',
+            'tipo'  => 'required|in:receita,despesa',
+        ]);
+
         try {
             Transacao::create($request->all());
         } catch (Exception $e) {

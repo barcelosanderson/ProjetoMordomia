@@ -31,6 +31,10 @@ class TarefaController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'nome' => 'required|min:3|max:100',
+        ]);
+
         try {
             Tarefa::create($request->all());
         } catch (Exception $e) {
@@ -53,6 +57,10 @@ class TarefaController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'nome' => 'required|min:3|max:100',
+        ]);
+
         try {
             $tarefa = Tarefa::findOrFail($id);
             $tarefa->update($request->all());

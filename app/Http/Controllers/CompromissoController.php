@@ -31,6 +31,12 @@ class CompromissoController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'titulo' => 'required|min:3|max:100',
+            'data'   => 'required|date',
+            'hora'   => 'required',
+        ]);
+
         try {
             Compromisso::create($request->all());
         } catch (Exception $e) {
@@ -53,6 +59,12 @@ class CompromissoController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'titulo' => 'required|min:3|max:100',
+            'data'   => 'required|date',
+            'hora'   => 'required',
+        ]);
+
         try {
             $compromisso = Compromisso::findOrFail($id);
             $compromisso->update($request->all());

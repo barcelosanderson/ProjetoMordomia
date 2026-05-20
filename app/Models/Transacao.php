@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Transacao extends Model
 {
@@ -11,8 +12,17 @@ class Transacao extends Model
     public $incrementing = true;
 
     protected $fillable = [
+        'user_id',
         'nome',
         'valor',
         'tipo',
     ];
+
+    /**
+     * Relacionamento: uma transação pertence a um usuário.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

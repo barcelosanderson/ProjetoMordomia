@@ -10,19 +10,35 @@ use Exception;
 class TransacaoController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Lista somente as transações do usuário logado
+     * e calcula os totais apenas com os dados dele.
      */
     public function index()
     {
-        $transacoes = Transacao::all();
-        $totalReceitas = Transacao::where('tipo', 'receita')->sum('valor');
-        $totalDespesas = Transacao::where('tipo', 'despesa')->sum('valor');
+        $transacoes = Transacao::where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        $totalReceitas = Transacao::where('user_id', auth()->id())
+            ->where('tipo', 'receita')
+            ->sum('valor');
+
+        $totalDespesas = Transacao::where('user_id', auth()->id())
+            ->where('tipo', 'despesa')
+            ->sum('valor');
+
         $saldo = $totalReceitas - $totalDespesas;
-        return view('financas.index', compact('transacoes', 'totalReceitas', 'totalDespesas', 'saldo'));
+
+        return view('financas.index', compact(
+            'transacoes',
+            'totalReceitas',
+            'totalDespesas',
+            'saldo'
+        ));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Abre formulário de criação.
      */
     public function create()
     {
@@ -30,11 +46,11 @@ class TransacaoController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Salva transação vinculada ao usuário logado.
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $dados = $request->validate([
             'nome'  => 'required|min:3|max:100',
             'valor' => 'required|numeric|min:0.01',
             'tipo'  => 'required|in:receita,despesa',
@@ -50,24 +66,43 @@ class TransacaoController extends Controller
         ]);
 
         try {
-            Transacao::create($request->all());
+            Transacao::create([
+                'user_id' => auth()->id(),
+                'nome' => $dados['nome'],
+                'valor' => $dados['valor'],
+                'tipo' => $dados['tipo'],
+            ]);
+
+            return redirect()
+                ->route('financas.index')
+                ->with('success', 'Transação criada com sucesso.');
         } catch (Exception $e) {
-            Log::error('Erro ao inserir transação: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao inserir transação: ' . $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', 'Não foi possível criar a transação.');
         }
-        return redirect()->route('financas.index');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Exclui somente transações do usuário logado.
      */
     public function destroy($id)
     {
         try {
-            $transacao = Transacao::findOrFail($id);
+            $transacao = Transacao::where('user_id', auth()->id())
+                ->findOrFail($id);
+
             $transacao->delete();
+
+            return redirect()
+                ->route('financas.index')
+                ->with('success', 'Transação excluída com sucesso.');
         } catch (Exception $e) {
-            Log::error('Erro ao excluir transação: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao excluir transação: ' . $e->getMessage());
+
+            return back()->with('error', 'Não foi possível excluir a transação.');
         }
-        return redirect()->route('financas.index');
     }
 }

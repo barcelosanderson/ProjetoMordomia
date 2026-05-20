@@ -10,16 +10,19 @@ use Exception;
 class TarefaController extends Controller
 {
     /**
-     * Display a listing of the resource. Lista todas as tarefas
+     * Lista somente as tarefas do usuário logado.
      */
     public function index()
     {
-        $tarefas = Tarefa::all();
+        $tarefas = Tarefa::where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
         return view('tarefas.index', compact('tarefas'));
     }
 
     /**
-     * Show the form for creating a new resource. Só abre o formulário, não acessa bd
+     * Abre o formulário de criação.
      */
     public function create()
     {
@@ -27,11 +30,11 @@ class TarefaController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage. Salva nova tarefa
+     * Salva uma nova tarefa vinculada ao usuário logado.
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $dados = $request->validate([
             'nome' => 'required|min:3|max:100',
         ], [
             'nome.required' => 'O nome da tarefa é obrigatório.',
@@ -40,28 +43,41 @@ class TarefaController extends Controller
         ]);
 
         try {
-            Tarefa::create($request->all()); //pega tudo e cria no banco
+            Tarefa::create([
+                'user_id' => auth()->id(),
+                'nome' => $dados['nome'],
+                'concluida' => false,
+            ]);
+
+            return redirect()
+                ->route('tarefas.index')
+                ->with('success', 'Tarefa criada com sucesso.');
         } catch (Exception $e) {
-            Log::error('Erro ao inserir tarefa: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao inserir tarefa: ' . $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', 'Não foi possível criar a tarefa.');
         }
-        return redirect()->route('tarefas.index'); //redireciona a listagem
     }
 
     /**
-     * Show the form for editing the specified resource. Abre formulário preenchido
+     * Abre o formulário de edição somente se a tarefa pertencer ao usuário logado.
      */
     public function edit($id)
     {
-        $tarefa = Tarefa::findOrFail($id); // Busca pelo ID
+        $tarefa = Tarefa::where('user_id', auth()->id())
+            ->findOrFail($id);
+
         return view('tarefas.edit', compact('tarefa'));
     }
 
     /**
-     * Update the specified resource in storage. Salva alterações
+     * Atualiza somente tarefas do usuário logado.
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $dados = $request->validate([
             'nome' => 'required|min:3|max:100',
         ], [
             'nome.required' => 'O nome da tarefa é obrigatório.',
@@ -70,41 +86,64 @@ class TarefaController extends Controller
         ]);
 
         try {
-            $tarefa = Tarefa::findOrFail($id); // busca o registro
-            $tarefa->update($request->all()); // atualiza com os novos dados
+            $tarefa = Tarefa::where('user_id', auth()->id())
+                ->findOrFail($id);
+
+            $tarefa->update([
+                'nome' => $dados['nome'],
+            ]);
+
+            return redirect()
+                ->route('tarefas.index')
+                ->with('success', 'Tarefa atualizada com sucesso.');
         } catch (Exception $e) {
-            Log::error('Erro ao alterar tarefa: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao alterar tarefa: ' . $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', 'Não foi possível atualizar a tarefa.');
         }
-        return redirect()->route('tarefas.index');
     }
 
     /**
-     * Toggle the completed status of the specified resource. Inverte o status 
+     * Inverte o status da tarefa somente se ela pertencer ao usuário logado.
      */
     public function toggle($id)
     {
         try {
-            $tarefa = Tarefa::findOrFail($id);
-            $tarefa->update(['concluida' => !$tarefa->concluida]); // ! inverte, se é true vira false
+            $tarefa = Tarefa::where('user_id', auth()->id())
+                ->findOrFail($id);
+
+            $tarefa->update([
+                'concluida' => !$tarefa->concluida,
+            ]);
+
+            return redirect()->route('tarefas.index');
         } catch (Exception $e) {
-            Log::error('Erro ao atualizar status da tarefa: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao atualizar status da tarefa: ' . $e->getMessage());
+
+            return back()->with('error', 'Não foi possível alterar o status da tarefa.');
         }
-        return redirect()->route('tarefas.index');
     }
 
     /**
-     * Remove the specified resource from storage. Exclui
+     * Exclui somente tarefas do usuário logado.
      */
     public function destroy($id)
     {
         try {
-            $tarefa = Tarefa::findOrFail($id);
+            $tarefa = Tarefa::where('user_id', auth()->id())
+                ->findOrFail($id);
+
             $tarefa->delete();
+
+            return redirect()
+                ->route('tarefas.index')
+                ->with('success', 'Tarefa excluída com sucesso.');
         } catch (Exception $e) {
-            Log::error('Erro ao excluir tarefa: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao excluir tarefa: ' . $e->getMessage());
+
+            return back()->with('error', 'Não foi possível excluir a tarefa.');
         }
-        return redirect()->route('tarefas.index');
     }
 }
-
-// todo método usa try/catch pois se der erro, ele registra no log e não quebra a aplicação

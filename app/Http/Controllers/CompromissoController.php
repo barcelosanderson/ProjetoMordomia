@@ -10,16 +10,20 @@ use Exception;
 class CompromissoController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Lista somente os compromissos do usuário logado.
      */
     public function index()
     {
-        $compromissos = Compromisso::orderBy('data')->orderBy('hora')->get(); //não é ::all e sim ::orderBy
+        $compromissos = Compromisso::where('user_id', auth()->id())
+            ->orderBy('data')
+            ->orderBy('hora')
+            ->get();
+
         return view('compromissos.index', compact('compromissos'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Abre formulário de criação.
      */
     public function create()
     {
@@ -27,11 +31,11 @@ class CompromissoController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Salva compromisso vinculado ao usuário logado.
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $dados = $request->validate([
             'titulo' => 'required|min:3|max:100',
             'data'   => 'required|date',
             'hora'   => 'required',
@@ -45,28 +49,42 @@ class CompromissoController extends Controller
         ]);
 
         try {
-            Compromisso::create($request->all());
+            Compromisso::create([
+                'user_id' => auth()->id(),
+                'titulo' => $dados['titulo'],
+                'data' => $dados['data'],
+                'hora' => $dados['hora'],
+            ]);
+
+            return redirect()
+                ->route('compromissos.index')
+                ->with('success', 'Compromisso criado com sucesso.');
         } catch (Exception $e) {
-            Log::error('Erro ao inserir compromisso: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao inserir compromisso: ' . $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', 'Não foi possível criar o compromisso.');
         }
-        return redirect()->route('compromissos.index');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Edita somente compromissos do usuário logado.
      */
     public function edit($id)
     {
-        $compromisso = Compromisso::findOrFail($id);
+        $compromisso = Compromisso::where('user_id', auth()->id())
+            ->findOrFail($id);
+
         return view('compromissos.edit', compact('compromisso'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Atualiza somente compromissos do usuário logado.
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $dados = $request->validate([
             'titulo' => 'required|min:3|max:100',
             'data'   => 'required|date',
             'hora'   => 'required',
@@ -80,25 +98,45 @@ class CompromissoController extends Controller
         ]);
 
         try {
-            $compromisso = Compromisso::findOrFail($id);
-            $compromisso->update($request->all());
+            $compromisso = Compromisso::where('user_id', auth()->id())
+                ->findOrFail($id);
+
+            $compromisso->update([
+                'titulo' => $dados['titulo'],
+                'data' => $dados['data'],
+                'hora' => $dados['hora'],
+            ]);
+
+            return redirect()
+                ->route('compromissos.index')
+                ->with('success', 'Compromisso atualizado com sucesso.');
         } catch (Exception $e) {
-            Log::error('Erro ao alterar compromisso: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao alterar compromisso: ' . $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', 'Não foi possível atualizar o compromisso.');
         }
-        return redirect()->route('compromissos.index');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Exclui somente compromissos do usuário logado.
      */
     public function destroy($id)
     {
         try {
-            $compromisso = Compromisso::findOrFail($id);
+            $compromisso = Compromisso::where('user_id', auth()->id())
+                ->findOrFail($id);
+
             $compromisso->delete();
+
+            return redirect()
+                ->route('compromissos.index')
+                ->with('success', 'Compromisso excluído com sucesso.');
         } catch (Exception $e) {
-            Log::error('Erro ao excluir compromisso: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao excluir compromisso: ' . $e->getMessage());
+
+            return back()->with('error', 'Não foi possível excluir o compromisso.');
         }
-        return redirect()->route('compromissos.index');
     }
 }

@@ -28,27 +28,53 @@
                 <i class="bi bi-chat-dots"></i>
                 Chat com IA
             </a>
+
             <a href="{{ route('tarefas.index') }}"
                class="sidebar-link {{ request()->routeIs('tarefas.*') ? 'active' : '' }}">
                 <i class="bi bi-check2-square"></i>
                 Tarefas
             </a>
+
             <a href="{{ route('compromissos.index') }}"
                class="sidebar-link {{ request()->routeIs('compromissos.*') ? 'active' : '' }}">
                 <i class="bi bi-calendar3"></i>
                 Compromissos
             </a>
+
             <a href="{{ route('financas.index') }}"
                class="sidebar-link {{ request()->routeIs('financas.*') ? 'active' : '' }}">
                 <i class="bi bi-cash-coin"></i>
                 Finanças
             </a>
+
             <a href="{{ route('compras.index') }}"
                class="sidebar-link {{ request()->routeIs('compras.*') ? 'active' : '' }}">
                 <i class="bi bi-cart3"></i>
                 Compras
             </a>
         </nav>
+
+        <!-- Área do usuário logado -->
+        <div class="sidebar-user">
+            <div class="sidebar-user-info">
+                <div class="sidebar-user-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+
+                <div>
+                    <p class="sidebar-user-name">{{ auth()->user()->name }}</p>
+                    <p class="sidebar-user-email">{{ auth()->user()->email }}</p>
+                </div>
+            </div>
+
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="sidebar-logout-btn">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Sair
+                </button>
+            </form>
+        </div>
     </aside>
 
     <!-- Mobile header -->
@@ -65,12 +91,13 @@
                 </div>
             @endif
 
-            @yield('content')  <!-- conteúdo de cada página aparece -->
+            @yield('content')
         </div>
     </div>
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     @stack('scripts')
     @yield('scripts')
 </body>

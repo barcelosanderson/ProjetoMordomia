@@ -10,16 +10,19 @@ use Exception;
 class CompraController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Lista somente os itens de compra do usuário logado.
      */
     public function index()
     {
-        $compras = Compra::all();
+        $compras = Compra::where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
         return view('compras.index', compact('compras'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Abre formulário de criação.
      */
     public function create()
     {
@@ -27,11 +30,11 @@ class CompraController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Salva item de compra vinculado ao usuário logado.
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $dados = $request->validate([
             'nome' => 'required|min:3|max:100',
         ], [
             'nome.required' => 'O nome do item é obrigatório.',
@@ -40,28 +43,41 @@ class CompraController extends Controller
         ]);
 
         try {
-            Compra::create($request->all());
+            Compra::create([
+                'user_id' => auth()->id(),
+                'nome' => $dados['nome'],
+                'comprado' => false,
+            ]);
+
+            return redirect()
+                ->route('compras.index')
+                ->with('success', 'Item criado com sucesso.');
         } catch (Exception $e) {
-            Log::error('Erro ao inserir item de compra: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao inserir item de compra: ' . $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', 'Não foi possível criar o item.');
         }
-        return redirect()->route('compras.index');
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Edita somente itens do usuário logado.
      */
     public function edit($id)
     {
-        $compra = Compra::findOrFail($id);
+        $compra = Compra::where('user_id', auth()->id())
+            ->findOrFail($id);
+
         return view('compras.edit', compact('compra'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Atualiza somente itens do usuário logado.
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $dados = $request->validate([
             'nome' => 'required|min:3|max:100',
         ], [
             'nome.required' => 'O nome do item é obrigatório.',
@@ -70,39 +86,64 @@ class CompraController extends Controller
         ]);
 
         try {
-            $compra = Compra::findOrFail($id);
-            $compra->update($request->all());
+            $compra = Compra::where('user_id', auth()->id())
+                ->findOrFail($id);
+
+            $compra->update([
+                'nome' => $dados['nome'],
+            ]);
+
+            return redirect()
+                ->route('compras.index')
+                ->with('success', 'Item atualizado com sucesso.');
         } catch (Exception $e) {
-            Log::error('Erro ao alterar item de compra: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao alterar item de compra: ' . $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', 'Não foi possível atualizar o item.');
         }
-        return redirect()->route('compras.index');
     }
 
     /**
-     * Toggle the purchased status of the specified resource.
+     * Inverte o status comprado/não comprado.
      */
     public function toggle($id)
     {
         try {
-            $compra = Compra::findOrFail($id);
-            $compra->update(['comprado' => !$compra->comprado]);
+            $compra = Compra::where('user_id', auth()->id())
+                ->findOrFail($id);
+
+            $compra->update([
+                'comprado' => !$compra->comprado,
+            ]);
+
+            return redirect()->route('compras.index');
         } catch (Exception $e) {
-            Log::error('Erro ao atualizar status do item: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao atualizar status do item: ' . $e->getMessage());
+
+            return back()->with('error', 'Não foi possível alterar o status do item.');
         }
-        return redirect()->route('compras.index');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Exclui somente itens do usuário logado.
      */
     public function destroy($id)
     {
         try {
-            $compra = Compra::findOrFail($id);
+            $compra = Compra::where('user_id', auth()->id())
+                ->findOrFail($id);
+
             $compra->delete();
+
+            return redirect()
+                ->route('compras.index')
+                ->with('success', 'Item excluído com sucesso.');
         } catch (Exception $e) {
-            Log::error('Erro ao excluir item de compra: ' . $e->getMessage(), ['stack' => $e->getStackTraceAsString()]);
+            Log::error('Erro ao excluir item de compra: ' . $e->getMessage());
+
+            return back()->with('error', 'Não foi possível excluir o item.');
         }
-        return redirect()->route('compras.index');
     }
 }

@@ -3,19 +3,29 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Compra extends Model
 {
-    protected $table = 'compras'; // $table - qual tabela
+    protected $table = 'compras';
 
-    public $incrementing = true; 
+    public $incrementing = true;
 
-    protected $fillable = [ // $fillable - lista os campos que podem ser preenchidos
+    protected $fillable = [
+        'user_id',
         'nome',
         'comprado',
     ];
 
-    protected $casts = [ // $casts converte o campo true/false 
+    protected $casts = [
         'comprado' => 'boolean',
     ];
+
+    /**
+     * Relacionamento: um item de compra pertence a um usuário.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

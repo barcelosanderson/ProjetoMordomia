@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Compra extends Model
 {
-    protected $table = 'compras';
+    protected $table = 'compras'; // $table - qual tabela
 
-    public $incrementing = true;
+    public $incrementing = true; 
 
-    protected $fillable = [
+    protected $fillable = [ // $fillable - lista os campos que podem ser preenchidos
         'nome',
         'comprado',
     ];
 
-    protected $casts = [
+    protected $casts = [ // $casts converte o campo true/false 
         'comprado' => 'boolean',
     ];
 }

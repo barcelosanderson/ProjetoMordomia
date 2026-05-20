@@ -14,7 +14,7 @@ class CompromissoController extends Controller
      */
     public function index()
     {
-        $compromissos = Compromisso::orderBy('data')->orderBy('hora')->get();
+        $compromissos = Compromisso::orderBy('data')->orderBy('hora')->get(); //não é ::all e sim ::orderBy
         return view('compromissos.index', compact('compromissos'));
     }
 

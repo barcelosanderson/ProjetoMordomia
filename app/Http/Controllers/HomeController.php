@@ -11,6 +11,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home.index');
+        $historico = session('chat_historico', []);
+        return view('home.index', compact('historico'));
     }
 }

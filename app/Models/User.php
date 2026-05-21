@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'email_verification_token'])]
+#[Fillable(['name', 'email', 'password', 'email_verified_at', 'email_verification_token'])]
 #[Hidden(['password', 'remember_token', 'email_verification_token'])]
 class User extends Authenticatable
 {
@@ -24,6 +24,14 @@ class User extends Authenticatable
     public function tarefas(): HasMany
     {
         return $this->hasMany(Tarefa::class);
+    }
+
+    /**
+     * Relacionamento: um usuário pode ter várias conclusões de tarefas.
+     */
+    public function tarefaConclusoes(): HasMany
+    {
+        return $this->hasMany(TarefaConclusao::class);
     }
 
     /**

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class EmailVerificationController extends Controller
@@ -47,10 +48,17 @@ class EmailVerificationController extends Controller
                 ]);
         }
 
-        $usuario->forceFill([
-            'email_verified_at' => now(),
-            'email_verification_token' => null,
-        ])->save();
+        /*
+     * Atualização direta no banco.
+     * Aqui não dependemos de fillable, cast ou qualquer regra do Model.
+     */
+        DB::table('users')
+            ->where('id', $usuario->id)
+            ->update([
+                'email_verified_at' => now(),
+                'email_verification_token' => null,
+                'updated_at' => now(),
+            ]);
 
         return redirect()
             ->route('login')

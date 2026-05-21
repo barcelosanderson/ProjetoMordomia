@@ -153,6 +153,12 @@ PROMPT;
                         'user_id' => auth()->id(),
                         'nome' => $dados['nome'],
                         'concluida' => false,
+
+                        /*
+                        * Quando a tarefa é criada pelo chat, por enquanto ela será diária.
+                        * Depois podemos evoluir o prompt da IA para interpretar dias específicos.
+                        */
+                        'dias_semana' => [0, 1, 2, 3, 4, 5, 6],
                     ]);
                     break;
 

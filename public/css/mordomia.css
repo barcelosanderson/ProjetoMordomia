@@ -844,3 +844,175 @@ body {
 .auth-small-link:hover {
     color: var(--color-primary);
 }
+
+/* =============================================
+   Tarefas — Cards da semana
+   ============================================= */
+
+.week-board {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.weekday-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 0.9rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    min-height: 126px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: border-color 0.2s, transform 0.2s, background 0.2s;
+}
+
+.weekday-card:hover {
+    color: var(--text-primary);
+    border-color: rgba(124, 92, 252, 0.55);
+    transform: translateY(-2px);
+}
+
+.weekday-card.active {
+    border-color: var(--color-primary);
+    background-color: rgba(124, 92, 252, 0.12);
+}
+
+.weekday-card.today {
+    box-shadow: inset 0 0 0 1px rgba(124, 92, 252, 0.35);
+}
+
+.weekday-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.weekday-name {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.weekday-today-badge {
+    font-size: 0.62rem;
+    color: var(--color-primary);
+    background-color: rgba(124, 92, 252, 0.16);
+    border: 1px solid rgba(124, 92, 252, 0.28);
+    padding: 0.12rem 0.4rem;
+    border-radius: 999px;
+}
+
+.weekday-numbers {
+    margin-top: 0.75rem;
+}
+
+.weekday-numbers strong {
+    display: block;
+    font-size: 1.45rem;
+    line-height: 1;
+    color: #ffffff;
+}
+
+.weekday-numbers span {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.weekday-status {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+}
+
+.weekday-progress {
+    height: 0.35rem;
+    background-color: var(--bg-muted);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 0.65rem;
+}
+
+.weekday-progress-fill {
+    height: 100%;
+    background-color: var(--color-primary);
+    border-radius: 999px;
+    transition: width 0.25s;
+}
+
+.weekday-empty-state {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =============================================
+   Tarefas — Seletor de dias
+   ============================================= */
+
+.day-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+.day-selector-item {
+    cursor: pointer;
+}
+
+.day-selector-item input {
+    display: none;
+}
+
+.day-selector-item span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.6rem;
+    border-radius: 0.8rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.day-selector-item input:checked + span {
+    background-color: rgba(124, 92, 252, 0.16);
+    border-color: var(--color-primary);
+    color: #ffffff;
+}
+
+.day-selector-item span:hover {
+    border-color: rgba(124, 92, 252, 0.55);
+    color: #ffffff;
+}
+
+@media (max-width: 992px) {
+    .week-board {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .day-selector-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 576px) {
+    .week-board {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .day-selector-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

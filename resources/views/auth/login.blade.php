@@ -76,5 +76,10 @@
         <a href="{{ route('register') }}">Criar conta</a>
     </div>
 
+    <div class="auth-footer mt-2">
+        <span>Não recebeu o link?</span>
+        <a href="{{ route('verification.notice') }}">Reenviar verificação</a>
+    </div>
+
 </div>
 @endsection

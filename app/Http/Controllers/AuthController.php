@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
@@ -24,7 +26,6 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Validação inicial dos campos enviados pelo formulário.
         $credenciais = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
@@ -34,14 +35,25 @@ class AuthController extends Controller
             'password.required' => 'Informe sua senha.',
         ]);
 
-        // Tenta autenticar o usuário usando e-mail e senha.
         if (!Auth::attempt($credenciais)) {
             throw ValidationException::withMessages([
                 'email' => 'E-mail ou senha inválidos.',
             ]);
         }
 
-        // Regenera a sessão para evitar session fixation.
+        $usuario = Auth::user();
+
+        if (!$usuario->email_verified_at) {
+            Auth::logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'Você precisa verificar seu e-mail antes de acessar o sistema.',
+            ]);
+        }
+
         $request->session()->regenerate();
 
         return redirect()
@@ -62,7 +74,6 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        // Validação completa do cadastro.
         $dados = $request->validate([
             'name' => ['required', 'string', 'min:3', 'max:100'],
             'email' => ['required', 'email', 'max:150', 'unique:users,email'],
@@ -88,22 +99,35 @@ class AuthController extends Controller
             'password.numbers' => 'A senha deve conter pelo menos um número.',
         ]);
 
-        // Cria o usuário no banco.
+        $token = Str::random(64);
+
         $usuario = User::create([
             'name' => $dados['name'],
             'email' => $dados['email'],
             'password' => Hash::make($dados['password']),
+            'email_verification_token' => Hash::make($token),
         ]);
 
-        // Após cadastrar, já autentica o usuário.
-        Auth::login($usuario);
+        $link = route('verification.verify', [
+            'id' => $usuario->id,
+            'token' => $token,
+        ]);
 
-        // Regenera a sessão após autenticação.
-        $request->session()->regenerate();
+        Mail::raw(
+            "Olá, {$usuario->name}!\n\n" .
+                "Sua conta na MordomIA foi criada.\n\n" .
+                "Para ativar seu acesso, verifique seu e-mail clicando no link abaixo:\n\n" .
+                "{$link}\n\n" .
+                "Se você não criou essa conta, ignore este e-mail.",
+            function ($message) use ($usuario) {
+                $message->to($usuario->email)
+                    ->subject('Verificação de e-mail — MordomIA');
+            }
+        );
 
         return redirect()
-            ->route('home')
-            ->with('success', 'Conta criada com sucesso.');
+            ->route('login')
+            ->with('success', 'Conta criada com sucesso. Enviamos um link de verificação para seu e-mail.');
     }
 
     /**

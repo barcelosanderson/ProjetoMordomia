@@ -9,6 +9,7 @@ use App\Http\Controllers\CompromissoController;
 use App\Http\Controllers\TransacaoController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\EmailVerificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,6 +17,7 @@ use App\Http\Controllers\ChatController;
 |--------------------------------------------------------------------------
 | Essas rotas podem ser acessadas por usuários que ainda não estão logados.
 */
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -35,6 +37,16 @@ Route::middleware('guest')->group(function () {
 
     Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])
         ->name('password.update');
+
+    // Verificação de e-mail
+    Route::get('/verify-email', [EmailVerificationController::class, 'showNotice'])
+        ->name('verification.notice');
+
+    Route::post('/verify-email/resend', [EmailVerificationController::class, 'resend'])
+        ->name('verification.resend');
+
+    Route::get('/verify-email/{id}/{token}', [EmailVerificationController::class, 'verify'])
+        ->name('verification.verify');
 });
 
 /*

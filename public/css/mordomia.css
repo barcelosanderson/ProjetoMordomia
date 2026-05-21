@@ -833,3 +833,14 @@ body {
     border-color: rgba(239, 68, 68, 0.35);
     color: #f87171;
 }
+
+.auth-small-link {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.auth-small-link:hover {
+    color: var(--color-primary);
+}

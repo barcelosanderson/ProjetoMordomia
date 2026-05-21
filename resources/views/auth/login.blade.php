@@ -14,16 +14,16 @@
     </div>
 
     @if(session('success'))
-        <div class="alert-dark-success mb-3">
-            <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
-        </div>
+    <div class="alert-dark-success mb-3">
+        <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+    </div>
     @endif
 
     @if($errors->any())
-        <div class="alert-dark-danger mb-3">
-            <i class="bi bi-exclamation-circle me-2"></i>
-            Verifique os dados informados.
-        </div>
+    <div class="alert-dark-danger mb-3">
+        <i class="bi bi-exclamation-circle me-2"></i>
+        Verifique os dados informados.
+    </div>
     @endif
 
     <form action="{{ route('login.post') }}" method="POST">
@@ -39,11 +39,10 @@
                 value="{{ old('email') }}"
                 placeholder="seuemail@exemplo.com"
                 autocomplete="email"
-                autofocus
-            >
+                autofocus>
 
             @error('email')
-                <div class="input-error">{{ $message }}</div>
+            <div class="input-error">{{ $message }}</div>
             @enderror
         </div>
 
@@ -55,18 +54,21 @@
                 name="password"
                 class="input-dark @error('password') is-invalid-dark @enderror"
                 placeholder="Digite sua senha"
-                autocomplete="current-password"
-            >
+                autocomplete="current-password">
 
             @error('password')
-                <div class="input-error">{{ $message }}</div>
+            <div class="input-error">{{ $message }}</div>
             @enderror
         </div>
+        <div class="text-end mb-3">
+            <a href="{{ route('password.request') }}" class="auth-small-link">
+                Esqueci minha senha
+            </a>
 
-        <button type="submit" class="btn-primary-dark w-100 justify-content-center mt-2">
-            <i class="bi bi-box-arrow-in-right"></i>
-            Entrar
-        </button>
+            <button type="submit" class="btn-primary-dark w-100 justify-content-center mt-2">
+                <i class="bi bi-box-arrow-in-right"></i>
+                Entrar
+            </button>
     </form>
 
     <div class="auth-footer">
